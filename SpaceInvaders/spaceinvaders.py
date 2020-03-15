@@ -14,6 +14,10 @@ class SpaceInvaders (GenericData):
         self.player = Ship() #inicamos la nave
 
 
+    def redraw(self):
+        self.screen.blit(self.background, (0, 0))#ponemos el background
+        self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
+        display.update()
 
     def main (self):
 
@@ -23,23 +27,22 @@ class SpaceInvaders (GenericData):
         self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
 
         while True:
-            teclado=key.get_pressed()
-            if teclado[K_RIGHT]:
-                self.player.rect.centerx += 8
 
+            self.clock.tick(30)#fps
 
-            if teclado[K_LEFT]:
-                self.player.rect.centerx -= 8
 
             self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
-            display.flip()#actualizamos la screen
+            display.update()#actualizamos la screen
+
+            self.player.update()
+            self.redraw()#método para redibujar la pantalla y que funcione el movimiento
 
             for evento in event.get(): # El usuario hizo algo
                 if evento.type == QUIT:
                     sys.exit()
 
 
-            self.clock.tick(60)#fps
+
 
 
 

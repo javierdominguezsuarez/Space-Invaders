@@ -34,14 +34,23 @@ class GenericData ():
 class Ship (sprite.Sprite):
     def __init__(self):
         super().__init__() #Iniciando la clase sprite
-        self.image = image.load(GenericData.IMG_PATH +"player2.png").convert() #extraenos la imagen para el sprite
+        self.image = image.load(GenericData.IMG_PATH +"player4.png") #extraenos la imagen para el sprite
         self.rect = self.image.get_rect() #This rectangle represent the dimensions of the sprite
         self.rect.centerx = 400
-        self.rect.centery = 550
-        self.speed = 8
+        self.rect.centery = 565
+        self.speed = 20
+
     def update (self):
-        pass
-       
+        
+        """método que controla el movimiento de la nave"""
+        teclado=key.get_pressed()#guarda la tecla que se ha pulsado
+
+        if teclado[K_RIGHT]:
+            if self.rect.centerx < 775:
+                self.rect.centerx += self.speed
+        if teclado[K_LEFT]:
+            if self.rect.centerx > 25 :
+                self.rect.centerx -= self.speed
 
 
 class SpaceInvaders (GenericData):
@@ -52,9 +61,13 @@ class SpaceInvaders (GenericData):
         self.background = image.load(GenericData.BG_PATH + 'background.jpg').convert_alpha()#preparamos la imagen del background
         self.clock=time.Clock() #iniciamos el reloj
         self.player = Ship() #inicamos la nave
-        
 
-        
+
+    def redraw(self):
+        self.screen.blit(self.background, (0, 0))#ponemos el background
+        self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
+        display.update()
+
     def main (self):
 
         self.__init__()
@@ -63,26 +76,21 @@ class SpaceInvaders (GenericData):
         self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
 
         while True:
-            teclado=key.get_pressed()
-            if teclado[K_RIGHT]:
-                self.player.rect.centerx += 8
-        
- 
-            if teclado[K_LEFT]:
-                self.player.rect.centerx -= 8
-                
+
+            self.clock.tick(30)#fps
+
+
             self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
-            display.flip()#actualizamos la screen
-            
+            display.update()#actualizamos la screen
+
+            self.player.update()#movimiento de la nave
+
+
+            self.redraw()#método para redibujar la pantalla y que funcione el movimiento
+
             for evento in event.get(): # El usuario hizo algo
                 if evento.type == QUIT:
                     sys.exit()
-            
-            
-            self.clock.tick(60)#fps
-            
-        
-
 
 
 if __name__ == '__main__':
