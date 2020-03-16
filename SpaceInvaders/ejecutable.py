@@ -51,7 +51,7 @@ class Ship (sprite.Sprite):
     """Clase que define el comportamiento de la nave"""
     def __init__(self):
         super().__init__() #Iniciando la clase sprite
-        self.image = image.load(GenericData.IMG_PATH +"player3.png") #extraenos la imagen para el sprite
+        self.image = image.load(GenericData.IMG_PATH +"player.png") #extraenos la imagen para el sprite
         self.rect = self.image.get_rect() #This rectangle represent the dimensions of the sprite
         self.rect.centerx = 400
         self.rect.centery = 565
