@@ -40,10 +40,10 @@ class Bullet (sprite.Sprite):
         self.rect.centerx = position_x
         self.rect.centery = position_y
     def update (self):
-        self.rect.y -= 1
-        #if self.rect.y < 15 or self.rect.y > 585:
-         #   self.kill()
-    
+        self.rect.y -= 5
+        if self.rect.y < 2 or self.rect.y > 585:
+            self.kill()
+
 class Ship (sprite.Sprite):
     def __init__(self):
         super().__init__() #Iniciando la clase sprite
@@ -51,10 +51,10 @@ class Ship (sprite.Sprite):
         self.rect = self.image.get_rect() #This rectangle represent the dimensions of the sprite
         self.rect.centerx = 400
         self.rect.centery = 565
-        self.speed = 28
-        
+        self.speed = 20
+
     def update (self):
-        
+
         """método que controla el movimiento de la nave"""
         teclado=key.get_pressed()#guarda la tecla que se ha pulsado
 
@@ -74,48 +74,53 @@ class SpaceInvaders (GenericData):
         self.background = image.load(GenericData.BG_PATH + 'background.jpg').convert_alpha()#preparamos la imagen del background
         self.clock=time.Clock() #iniciamos el reloj
         self.player = Ship() #inicamos la nave
-        
+        self.spr_list = sprite.Group() #creamos un grupo de sprites
+        self.bullets_list = sprite.Group() #creamos un grupo de balas
+        self.spr_list.add(self.player)
+
     def redraw(self):
         self.screen.blit(self.background, (0, 0))#ponemos el background
         self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
+        for i in self.bullets_list:
+            self.screen.blit(i.image, i.rect)
         display.update()
-        
+
     def ship_shoot(self):
-        #self.screen.blit(self.image, self.rect)
+        """metodo para que la nave dispare"""
+        #recogemos los eventos
+        events = event.get()
+        for even in events:
+            if even.type == KEYDOWN:
+                if even.key == K_SPACE:
+                    bullet = Bullet(self.player.rect.centerx,self.player.rect.top-10,-1,1)#creamos la bala
+                    self.bullets_list.add(bullet) #añadimos la bala a la lista de balas
+                    self.spr_list.add(bullet) #añadimos la bala a la lista de sprites
+                    self.screen.blit(bullet.image, bullet.rect)
         
-        bullet = Bullet(self.player.rect.centerx,self.player.rect.top-10,-1,1)#creamos la bala
-        
-        while bullet.rect.top > 5:
-            bullet.update()
-            self.screen.blit(self.background, (0, 0))#ponemos el background
-            self.screen.blit(bullet.image, bullet.rect)
-            self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
-            display.update()
-            
-            
-            
-            
-        
-        
-        
+    
+    
+
+
+
+
+
+
+
     def main (self):
 
-        self.__init__()
         init() #pygame init
-        
+        self.__init__()
+
 
         while True:
-            
+
             self.clock.tick(30)#fps
-            
+
 
             self.screen.blit(self.background, (0, 0))#ponemos el background
             self.screen.blit(self.player.image,self.player.rect)# añadimos la nave
-            self.player.update()#movimiento de la nave
-            
-            
-            
             self.ship_shoot()
+            self.spr_list.update()
             self.redraw()#método para redibujar la pantalla y que funcione el movimiento
             
             for evento in event.get(): # El usuario hizo algo
