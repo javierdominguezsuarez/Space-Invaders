@@ -32,11 +32,14 @@ class GenericData ():
 
 class Bullet (sprite.Sprite):
     """Clase que define el comportamiento de una bala"""
-    
+
     def __init__(self,position_x,position_y,dirc,speed):
-        super().__init__()#Iniciando la clase sprite
-        self.image = image.load(GenericData.IMG_PATH +"laser.png") #extraenos la imagen para el sprite
-        self.rect = self.image.get_rect() #This rectangle represent the dimensions of the sprite
+        #Iniciando la clase sprite
+        super().__init__()
+        #Extraenos la imagen para el sprite
+        self.image = image.load(GenericData.IMG_PATH +"laser.png")
+        #Esta función nos devuelve un objeto con las dimensiones del sprite
+        self.rect = self.image.get_rect()
         self.dirc = dirc
         self.speed = speed
         self.rect.centerx = position_x
@@ -50,16 +53,20 @@ class Bullet (sprite.Sprite):
 class Ship (sprite.Sprite):
     """Clase que define el comportamiento de la nave"""
     def __init__(self):
-        super().__init__() #Iniciando la clase sprite
-        self.image = image.load(GenericData.IMG_PATH +"player.png") #extraenos la imagen para el sprite
-        self.rect = self.image.get_rect() #This rectangle represent the dimensions of the sprite
+        #Iniciando la clase sprite
+        super().__init__()
+        #Extraenos la imagen para el sprite
+        self.image = image.load(GenericData.IMG_PATH +"player.png")
+        #Esta función nos devuelve un objeto con las dimensiones del sprite
+        self.rect = self.image.get_rect()
         self.rect.centerx = 400
         self.rect.centery = 565
         self.speed = 20
 
     def update (self):
         """Método que controla el movimiento de la nave"""
-        teclado=key.get_pressed()#guarda la tecla que se ha pulsado
+        #Guarda la tecla que se ha pulsado
+        teclado=key.get_pressed()
 
         if teclado[K_RIGHT]:
             if self.rect.centerx < 760:
@@ -71,11 +78,14 @@ class Ship (sprite.Sprite):
 class Alien (sprite.Sprite):
     """Clase que define el comportamiento de un alien"""
     def __init__(self,row,col):
-        super().__init__() #Iniciando la clase sprite
-        self.image = image.load(GenericData.IMG_PATH +"alien.png") #extraenos la imagen para el sprite
+        #Iniciando la clase sprite
+        super().__init__()
+        #Extraenos la imagen para el sprite
+        self.image = image.load(GenericData.IMG_PATH +"alien.png")
         self.row = row
         self.col = col
-        self.rect = self.image.get_rect() #This rectangle represent the dimensions of the sprite
+        #Esta función nos devuelve un objeto con las dimensiones del sprite
+        self.rect = self.image.get_rect()
         self.rect.centerx = 400
         self.rect.centery = 100
         self.speed = 20
@@ -84,7 +94,7 @@ class Alien (sprite.Sprite):
 
 class AlienGroup (sprite.Group):
     """Clase que define el comportamiento del grupo de oponentes"""
-    
+
     def __init__(self,row,col):
         sprite.Group.__init__(self)
         self.dirc = 1
@@ -107,7 +117,7 @@ class SpaceInvaders (GenericData):
     """Clase que se encarga de lanzar el juego"""
 
     def __init__(self):
-        
+
         #Configura el título de la ventana
         display.set_caption("Space invaders")
         #Configura el area de la pantalla
@@ -121,10 +131,11 @@ class SpaceInvaders (GenericData):
         #Creamos un grupo de sprites
         self.spr_list = sprite.Group()
         #Creamos un grupo de balas
-        self.bullets_list = sprite.Group() 
+        self.bullets_list = sprite.Group()
         self.spr_list.add(self.player)
         #self.enemies = AlienGroup(6,6)
         #self.spr_list.add(self.enemies.aliens)
+
     def redraw(self):
         #Pegamos los sprites
         self.screen.blit(self.background, (0, 0))#ponemos el background
@@ -142,35 +153,35 @@ class SpaceInvaders (GenericData):
 
     def ship_shoot(self):
         """Método para que la nave dispare"""
-        
+
         #Recogemos los eventos
         events = event.get()
-        
+
         #Controlamos el boton espacio para disparar
         for even in events:
             if even.type == KEYDOWN:
                 if even.key == K_SPACE:
-    
+
                     #Creamos la bala
                     bullet = Bullet(self.player.rect.centerx,self.player.rect.top-10,-1,1)
-                    
+
                     #Añadimos la bala a la lista de balas
                     self.bullets_list.add(bullet)
 
                     #Añadimos la bala a la lista de sprites
                     self.spr_list.add(bullet)
-                        
-                    #Pegamos la bala a la pantalla    
+
+                    #Pegamos la bala a la pantalla
                     self.screen.blit(bullet.image, bullet.rect)
 
 
 
 
     def main (self):
-        
+
         #Pygame init
         init()
-        
+
         #Iniciamos la clase
         self.__init__()
 
@@ -182,10 +193,10 @@ class SpaceInvaders (GenericData):
 
             #Pegamos el background
             self.screen.blit(self.background, (0, 0))
-            
+
             #Pegamos la nave
             self.screen.blit(self.player.image,self.player.rect)
-            
+
             #self.screen.blit(self.alien.image,self.alien.rect)
             #for r in range(6):
             #    for c in range(6):
@@ -193,15 +204,15 @@ class SpaceInvaders (GenericData):
 
             #Método para disparar
             self.ship_shoot()
-            
+
             #Actualizamos todos los sprites
             self.spr_list.update()
-            
+
             #Método para redibujar la pantalla y que funcione el movimiento
             self.redraw()
 
             #El usuario hizo algo
-            for evento in event.get(): 
+            for evento in event.get():
                 if evento.type == QUIT:
                     sys.exit()
 
