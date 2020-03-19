@@ -164,8 +164,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         #Numero de aliens de la ronda
         self.ronda = 5
         #Incremento de ovnis
-        self.incremento = 5
-        
+        self.incremento = 3
+        #Tiempo de disparo
+        self.shot_time = 550
         #Incremento de velocidad de ovnis
         self.speed_ronda = 2
         
@@ -174,8 +175,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
 
         #Grupo muros
         self.wall_group = sprite.Group()
-        
         self.init_wall()
+        
     def init_sound (self):
         
         #Musica
@@ -187,10 +188,10 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.shot_sound = mixer.Sound("shot.wav")
         #Sonido explosión alien
         self.crash_alien_sound = mixer.Sound("ca.wav")
-        mixer.Sound.set_volume(self.crash_alien_sound,0.05)
+        mixer.Sound.set_volume(self.crash_alien_sound,0.1)
         #Sonido explosion nave
         self.crash_ship_sound = mixer.Sound("cs.wav")
-        mixer.Sound.set_volume(self.crash_ship_sound,0.05)
+        mixer.Sound.set_volume(self.crash_ship_sound,0.1)
         #Sonido explosión final nave
         self.restart_sound = mixer.Sound("last.wav")
         mixer.Sound.set_volume(self.restart_sound,0.1)
@@ -377,7 +378,10 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         """Método para que la nave dispare"""
         #hay protecciones, lo que no la hemos hecho
         #Creamos la bala
-        if (time.get_ticks() - self.timer) > 550:
+        if self.shot_time > 200 and self.ronda >15:
+            self.shot_time -=50
+            
+        if (time.get_ticks() - self.timer) > self.shot_time:
             self.a_list = self.aliens_list.sprites()
             tam = len(self.a_list)
             if tam != 0:
@@ -410,9 +414,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 self.a_list = self.aliens_list.sprites()
                 tam = len(self.a_list)
                 if tam == 0:
-                    if self.ronda <= 10:
+                    if self.ronda < 24:
                         self.ronda += self.incremento
-                    if self.speed_ronda <8 and self.ronda == 15:
+                    if self.speed_ronda <11 and self.ronda > 13:
                         self.speed_ronda +=1
                     self.create_aliens(self.ronda,self.speed_ronda)
                     #Colocamos los muros de nuevo
@@ -450,16 +454,20 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.aliens_list.remove(a)
                                 
                         time.wait(750)
+
+                        #Eliminamos las balas
+                        self.ab_bullets.remove(bullet)
+                        self.spr_list_ab.remove(bullet)
                         
-                        #Y volvemos a empezar   
+                        #Y volvemos a empezar
+                        self.shot_time = 550
                         self.ronda = 5
-                        self.speed_ronda = 1
+                        self.speed_ronda = 2
                         self.create_aliens(self.ronda,self.speed_ronda)
 
                         #Restablecemos score
                         self.score_counter= 0
-                        self.ab_bullets.remove(bullet)
-                        self.spr_list_ab.remove(bullet)
+
                         
                         #Colocamos los muros de nuevo
                         self.init_wall()
@@ -486,9 +494,10 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.aliens_list.remove(a)
                             
                         time.wait(750)
-                        #Y volvemos a empezar   
+                        #Y volvemos a empezar
+                        self.shot_time = 550
                         self.ronda = 5
-                        self.speed_ronda = 1
+                        self.speed_ronda = 2
                         self.create_aliens(self.ronda,self.speed_ronda)
 
                         #Restablecemos score
