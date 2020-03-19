@@ -116,7 +116,10 @@ class Alien (sprite.Sprite):
         elif self.rect.x < 3:
             self.rect.y +=13
             self.dir=1
-
+            
+        if self.rect.y >=590:
+            self.kill()
+        
   
 
 class SpaceInvaders (GenericData,sprite.Sprite):
@@ -404,16 +407,16 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     self.spr_list.remove(bullet)
 
                     
-                    self.a_list = self.aliens_list.sprites()
-                    tam = len(self.a_list)
-                    if tam == 0:
-                        if self.ronda <= 10:
-                            self.ronda += self.incremento
-                        if self.speed_ronda <8 and self.ronda == 15:
-                            self.speed_ronda +=1
-                        self.create_aliens(self.ronda,self.speed_ronda)
-                        #Colocamos los muros de nuevo
-                        self.init_wall()
+                self.a_list = self.aliens_list.sprites()
+                tam = len(self.a_list)
+                if tam == 0:
+                    if self.ronda <= 10:
+                        self.ronda += self.incremento
+                    if self.speed_ronda <8 and self.ronda == 15:
+                        self.speed_ronda +=1
+                    self.create_aliens(self.ronda,self.speed_ronda)
+                    #Colocamos los muros de nuevo
+                    self.init_wall()
                         
             #Colisiones balas con balas
             sprite.groupcollide(self.bullets_list, self.ab_bullets, True, True)
@@ -490,8 +493,6 @@ class SpaceInvaders (GenericData,sprite.Sprite):
 
                         #Restablecemos score
                         self.score_counter= 0
-                        self.ab_bullets.remove(bullet)
-                        self.spr_list_ab.remove(bullet)
                         
                         #Colocamos los muros de nuevo
                         self.init_wall()
