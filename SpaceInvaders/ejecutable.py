@@ -134,7 +134,11 @@ class Ship (sprite.Sprite):
                 
                 
                 
-         
+    def burn (self):
+        
+        #Atributos para guardar las coordenadas en la animación
+        return (self.rect.centerx,self.rect.centery)
+    
 class Alien (sprite.Sprite):
     """Clase que define el comportamiento de un alien"""
     def __init__(self,speed):
@@ -146,6 +150,11 @@ class Alien (sprite.Sprite):
         self.rect = self.image.get_rect()
         self.dir = 1
         self.speed = speed
+
+        #Atributos para guardar las coordenadas en la animación
+        self.changex = 0
+        self.changey = 0
+        
     def update(self):
         
         if self.rect.x < 750 :
@@ -162,8 +171,39 @@ class Alien (sprite.Sprite):
         if self.rect.y >=590:
             self.kill()
         
-  
+    def burn (self):
+        
+        #Atributos para guardar las coordenadas en la animación
+        return (self.rect.centerx,self.rect.centery)
+        
+class Explotion (sprite.Sprite):
 
+    def __init__(self,pos,tipe):
+
+        super().__init__()
+        if tipe == 0 :
+            #Extraenos la imagen para la explosión
+            self.image = image.load(GenericData.AL_PATH +"explosion.png")
+            #Esta función nos devuelve un objeto con las dimensiones del sprite
+            self.rect = self.image.get_rect()
+        elif tipe == 1 :
+            #Extraenos la imagen para la explosión
+            self.image = image.load(GenericData.IMG_PATH +"explosion_ship1.png")
+            #Esta función nos devuelve un objeto con las dimensiones del sprite
+            self.rect = self.image.get_rect()
+            
+        self.rect.centerx = pos[0]
+        self.rect.centery = pos[1]
+
+        self.clk = time.get_ticks()
+        
+        
+        
+    def update(self):
+        if (time.get_ticks() - self.clk) > 70 :
+            self.kill()
+        
+        
 class SpaceInvaders (GenericData,sprite.Sprite):
     """Clase que se encarga de lanzar el juego"""
 
@@ -194,7 +234,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         
         #Reloj
         self.timer = time.get_ticks()
-        self.clk = time.get_ticks()
+        
         #Disparos alien
         self.ab_bullets = sprite.Group()
         self.spr_list_ab = sprite.Group()
@@ -218,6 +258,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         #Grupo muros
         self.wall_group = sprite.Group()
         self.init_wall()
+
+        #Grupo de explosiones
+        self.exp_group = sprite.Group()
         
     def init_sound (self):
         
@@ -381,7 +424,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         for l in self.wall_group:
             self.screen.blit(l.image, l.rect)
 
-        
+        for m in self.exp_group:
+            m.update()
+            self.screen.blit(m.image,m.rect)
         
         #Actualizamos pantalla
         display.update()
@@ -447,10 +492,13 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 alien_shot = sprite.spritecollide(bullet, self.aliens_list, True)
                 
                 for alien in alien_shot:
+                    exp = Explotion(alien.burn(),0)
+                    self.exp_group.add(exp)
                     mixer.Sound.play(self.crash_alien_sound)
                     self.score_counter+=50
                     self.bullets_list.remove(bullet)
                     self.spr_list.remove(bullet)
+                    
 
                     
                 self.a_list = self.aliens_list.sprites()
@@ -480,6 +528,10 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     player_shot = sprite.spritecollide(bullet, self.player_list,False)
                     
                     for player in player_shot:
+                        #Ponemos explosion
+                        exp = Explotion(player.burn(),1)
+                        self.exp_group.add(exp)
+                        
                         mixer.Sound.play(self.crash_ship_sound)
                         self.life_counter-=1
                         self.ab_bullets.remove(bullet)
@@ -490,7 +542,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     for player in player_shot:
                         mixer.Sound.play(self.restart_sound)
                         self.life_counter=3
-                        
+                        #Ponemos explosion
+                        exp = Explotion(player.burn(),1)
+                        self.exp_group.add(exp)
                         #Si perdemos, quitamos los aliens
                         for a in self.aliens_list:
                             self.aliens_list.remove(a)
@@ -520,6 +574,13 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     
                     player_shot = sprite.spritecollide(ali, self.player_list,False)
                     for player in player_shot:
+                        #Ponemos explosion nave
+                        exp = Explotion(player.burn(),1)
+                        self.exp_group.add(exp)
+                        #Ponemos explosion alien
+                        exp = Explotion(ali.burn(),0)
+                        self.exp_group.add(exp)
+                        #Sonido
                         mixer.Sound.play(self.crash_ship_sound)
                         self.life_counter-=1
                         self.aliens_list.remove(ali)
@@ -528,6 +589,13 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     
                     player_shot = sprite.spritecollide(ali, self.player_list,False)
                     for player in player_shot:
+                        #Ponemos explosion
+                        exp = Explotion(player.burn(),1)
+                        self.exp_group.add(exp)
+                        #Ponemos explosion alien
+                        exp = Explotion(ali.burn(),0)
+                        self.exp_group.add(exp)
+                        #Sonido
                         mixer.Sound.play(self.restart_sound)
                         self.life_counter=3
                         
