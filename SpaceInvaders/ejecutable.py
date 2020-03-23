@@ -60,18 +60,25 @@ class Bullet (sprite.Sprite):
         """Método para iniciar el objeto"""
         #Iniciando la clase sprite
         super().__init__()
-        
-        #Extraenos la imagen para el sprite
-        if ship_shot == 1 :
-            self.image = image.load(GenericData.IMG_PATH +"laser.png")
-        else :
-            self.image = image.load(GenericData.AL_PATH +"laser_a.png")
 
+        try :
+            #Extraenos la imagen para el sprite
+            if ship_shot == 1 :
+                self.image = image.load(GenericData.IMG_PATH +"laser.png")
+            else :
+                self.image = image.load(GenericData.AL_PATH +"laser_a.png")
+        except FileNotFoundError :
+            print("Sprite de la bala no encontrado")
+        
         #Esta función nos devuelve un objeto con las dimensiones del sprite
         self.rect = self.image.get_rect()
         #Asignamos dirección y velocidad
         self.dirc = dirc
         self.speed = speed
+        
+        assert type(coord_x) == int  and type(coord_y) == int ,"Error de tipo en coordenadas"
+        assert type(dirc) == int  and type(speed) == int ,"Error de tipo en parámetros de la bala"
+        
         #Asignamos su posición de salida
         self.rect.centerx = coord_x
         self.rect.centery = coord_y
@@ -89,15 +96,22 @@ class Ship (sprite.Sprite):
     def __init__(self):
         #Iniciando la clase sprite
         super().__init__()
-        #Extraenos la imagen para el sprite
-        self.image = image.load(GenericData.IMG_PATH +"player.png")
+
+        try:
+            #Extraenos la imagen para el sprite
+            self.image = image.load(GenericData.IMG_PATH +"player.png")
+        except FileNotFoundError :
+            print("Sprite de la nave no encontrado")
+        
         #Esta función nos devuelve un objeto con las dimensiones del sprite
         self.rect = self.image.get_rect()
         self.rect.centerx = 400
         self.rect.centery = 565
         #Establecemos la velocidad del movimiento de la nave
         self.speed = 15
-        #Atributos para guardar las coordenadas de la animaciónn
+        
+        #AÑADIR GETTER Y SETTER (ATRIBUTOS CHANGE X , CHANGE Y)
+        #Atributos para guardar las coordenadas de la animación
         self.changex = 0
         self.changey = 0
         
@@ -110,8 +124,11 @@ class Ship (sprite.Sprite):
         self.changey = self.rect.centery
 
         #Esto sirve para que cuando no se mueva la nave el fuego vuelva al centro
-        #Extraenos la imagen para el sprite
-        self.image = image.load(GenericData.IMG_PATH +"player.png")
+        try:
+            #Extraenos la imagen para el sprite
+            self.image = image.load(GenericData.IMG_PATH +"player.png")
+        except FileNotFoundError :
+            print("Sprite de la nave no encontrado")
         #Esta función nos devuelve un objeto con las dimensiones del sprite
         self.rect = self.image.get_rect()
 
@@ -126,8 +143,11 @@ class Ship (sprite.Sprite):
         if teclado[K_RIGHT]:
             if self.rect.centerx < 760:
                 
-                #Extraenos la imagen para el movimiento a la derecha
-                self.image = image.load(GenericData.IMG_PATH +"player_r.png")
+                try:
+                    #Extraenos la imagen para el sprite
+                    self.image = image.load(GenericData.IMG_PATH +"player_r.png")
+                except FileNotFoundError :
+                    print("Sprite de la nave no encontrado")
                 #Esta función nos devuelve un objeto con las dimensiones del sprite
                 self.rect = self.image.get_rect()
                 #Copiamos las coordenadas guardadas
@@ -141,8 +161,11 @@ class Ship (sprite.Sprite):
         if teclado[K_LEFT]:
             if self.rect.centerx > 40 :
                 
-                #Extraenos la imagen para el movimiento a la izquierda
-                self.image = image.load(GenericData.IMG_PATH +"player_l.png")
+                try:
+                    #Extraenos la imagen para el sprite
+                    self.image = image.load(GenericData.IMG_PATH +"player_l.png")
+                except FileNotFoundError :
+                    print("Sprite de la nave no encontrado")
                 #Esta función nos devuelve un objeto con las dimensiones del sprite
                 self.rect = self.image.get_rect()
                 #Copiamos las coordenadas guardadas
@@ -165,13 +188,20 @@ class Alien (sprite.Sprite):
         """Iniciamos el objeto"""
         #Iniciando la clase sprite
         super().__init__()
-        #Extraenos la imagen para el sprite
-        self.image = image.load(GenericData.AL_PATH +"alien.png")
+        
+        try :
+            #Extraenos la imagen para el sprite
+            self.image = image.load(GenericData.AL_PATH +"alien.png")
+        except FileNotFoundError :
+            print("Sprite de alien no encontrado")
+            
         #Esta función nos devuelve un objeto con las dimensiones del sprite
         self.rect = self.image.get_rect()
         #Variable para controlar que se mueve izq o drc
         self.dir = 1
+
         #Velocidad
+        assert type(speed) == int ,"Error de tipo en velocidad de alien"
         self.speed = speed
 
         #Atributos para guardar las coordenadas en la animación
@@ -216,14 +246,20 @@ class Explotion (sprite.Sprite):
         super().__init__()
         #Si es de alien
         if tipe == 0 :
-            #Extraenos la imagen para la explosión
-            self.image = image.load(GenericData.AL_PATH +"explosion.png")
+            try :
+                #Extraenos la imagen para la explosión
+                self.image = image.load(GenericData.AL_PATH +"explosion.png")
+            except FileNotFoundError :
+                print("Error en el sprite de la explosión")
             #Esta función nos devuelve un objeto con las dimensiones del sprite
             self.rect = self.image.get_rect()
         #Si es de la nave
         elif tipe == 1 :
-            #Extraenos la imagen para la explosión
-            self.image = image.load(GenericData.IMG_PATH +"explosion_ship1.png")
+            try :
+                #Extraenos la imagen para la explosión
+                self.image = image.load(GenericData.IMG_PATH +"explosion_ship1.png")
+            except FileNotFoundError :
+                print("Error en el sprite de la explosión")
             #Esta función nos devuelve un objeto con las dimensiones del sprite
             self.rect = self.image.get_rect()
             
@@ -250,8 +286,11 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         display.set_caption("Space invaders")
         #Configura el área de la pantalla
         self.screen = display.set_mode((GenericData.AREA))
-        #Preparamos la imagen de fondo
-        self.background = image.load(GenericData.BG_PATH + 'background.jpg').convert_alpha()
+        try :
+            #Preparamos la imagen de fondo
+            self.background = image.load(GenericData.BG_PATH + 'background.jpg').convert_alpha()
+        except FileNotFoundError :
+            print("No se encuentra el fondo")
         #Inicamos la nave
         self.player = Ship()
         #Creamos un grupo de sprites
@@ -278,6 +317,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.score_counter = 0
         #Numero de aliens de la ronda
         self.ronda = 5
+        #Numero de ronda
+        self.num_ronda = 1
         #Incremento de aliens
         self.incremento = 3
         #Tiempo de disparo
@@ -292,33 +333,37 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.init_wall()
         #Grupo de explosiones
         self.exp_group = sprite.Group()
-        
+
+        self.game_over = False
+        self.clockgame = time.Clock()
     def init_sound (self):
         """Inicializamos música"""
-        
-        #Música
-        #Llamamos a la función mixer
-        mixer.init()
-        #Música de fondo
-        self.main_music = mixer.music.load(GenericData.BG_PATH + 'music.mp3')
-        #El -1 indica que está sonando en bucle
-        mixer.music.play(-1)
-        #Ajustamos el volumen
-        mixer.music.set_volume(0.05)
-        #Sonido disparo
-        self.shot_sound = mixer.Sound("shot.wav")
-        #Sonido explosión alien
-        self.crash_alien_sound = mixer.Sound("ca.wav")
-        #Ajustamos el volumen
-        mixer.Sound.set_volume(self.crash_alien_sound,0.1)
-        #Sonido explosion nave
-        self.crash_ship_sound = mixer.Sound("cs.wav")
-        #Ajustamos el volumen
-        mixer.Sound.set_volume(self.crash_ship_sound,0.1)
-        #Sonido explosión final nave
-        self.restart_sound = mixer.Sound("last.wav")
-        #Ajustamos el volumen
-        mixer.Sound.set_volume(self.restart_sound,0.1)
+        try :
+            #Música
+            #Llamamos a la función mixer
+            mixer.init()
+            #Música de fondo
+            self.main_music = mixer.music.load(GenericData.BG_PATH + 'music.mp3')
+            #El -1 indica que está sonando en bucle
+            mixer.music.play(-1)
+            #Ajustamos el volumen
+            mixer.music.set_volume(0.05)
+            #Sonido disparo
+            self.shot_sound = mixer.Sound("shot.wav")
+            #Sonido explosión alien
+            self.crash_alien_sound = mixer.Sound("ca.wav")
+            #Ajustamos el volumen
+            mixer.Sound.set_volume(self.crash_alien_sound,0.1)
+            #Sonido explosion nave
+            self.crash_ship_sound = mixer.Sound("cs.wav")
+            #Ajustamos el volumen
+            mixer.Sound.set_volume(self.crash_ship_sound,0.1)
+            #Sonido explosión final nave
+            self.restart_sound = mixer.Sound("last.wav")
+            #Ajustamos el volumen
+            mixer.Sound.set_volume(self.restart_sound,0.1)
+        except FileNotFoundError :
+            print("Algunos archivos de audio no se han encontrado")
         
     def init_wall(self):
         """Inicializamos los bloques"""
@@ -326,13 +371,13 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         for row in range(6):
             for col in range(15):
                 #Primer bloque
-                x = 50 + (25) + (col * 10)
+                x = 75 + (col * 10)
                 y = 435 +  (row * 10)
                 #Segundo bloque
-                t= 50 + (276) + (col * 10)
+                t= 326 + (col * 10)
                 s= 435 +  (row * 10)
                 #Tercer bloque
-                r = 50 + (530) + (col * 10)
+                r = 580 + (col * 10)
                 w = 435 +  (row * 10)
 
                 #Comprobamos si la fila es la primera o la última para pintarla de otro color
@@ -367,7 +412,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 alien= Alien(speed)
                 
                 #Determina la posición de los aliens de forma aleatoria
-                alien.rect.x = random.randint(5,800)
+                alien.rect.x = random.randint(5,740)
                 alien.rect.y = random.randint(5,300)
 
                 #Se añaden a la lista de aliens (aliens_list)
@@ -387,35 +432,40 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.font_used = font.Font(None, 59)
         #Le metemos la puntuación
         self.number_score = self.font_used.render(str(self.score_counter), 0, (255, 255, 255))
-        #Cargamos el sprite de vidas y lo posicionamos
-        self.image_lives = image.load(GenericData.BG_PATH +"lives.png")
-        self.rect_lives = self.image_lives.get_rect()
-        self.rect_lives.centerx =  610
-        self.rect_lives.centery = 20
-        #Cargamos el sprite de score y lo posicionamos
-        self.image_score = image.load(GenericData.BG_PATH +"score.png")
-        self.rect_score = self.image_score.get_rect()
-        self.rect_score.centerx =  60
-        self.rect_score.centery = 20
-        #Cargamos el primer corazón
-        self.image_heart_one = image.load(GenericData.BG_PATH +"heart.png")
-        self.rect_heart_one = self.image_heart_one.get_rect()
-        self.rect_heart_one.centerx = 690
-        self.rect_heart_one.centery = 19
-        #Cargamos el segundo corazón
-        self.image_heart_two = image.load(GenericData.BG_PATH +"heart.png")
-        self.rect_heart_two = self.image_heart_two.get_rect()
-        self.rect_heart_two.centerx = 730
-        self.rect_heart_two.centery = 19
-        #Cargamos el tercer corazón
-        self.image_heart_three = image.load(GenericData.BG_PATH +"heart.png")
-        self.rect_heart_three = self.image_heart_three.get_rect()
-        self.rect_heart_three.centerx = 770
-        self.rect_heart_three.centery = 19
+        self.number_ronda = self.font_used.render(str(self.num_ronda), 0, (255, 255, 255))
+        try : 
+            #Cargamos el sprite de vidas y lo posicionamos
+            self.image_lives = image.load(GenericData.BG_PATH +"lives.png")
+            self.rect_lives = self.image_lives.get_rect()
+            self.rect_lives.centerx =  610
+            self.rect_lives.centery = 20
+            #Cargamos el sprite de score y lo posicionamos
+            self.image_score = image.load(GenericData.BG_PATH +"score.png")
+            self.rect_score = self.image_score.get_rect()
+            self.rect_score.centerx =  60
+            self.rect_score.centery = 20
+            #Cargamos el primer corazón
+            self.image_heart_one = image.load(GenericData.BG_PATH +"heart.png")
+            self.rect_heart_one = self.image_heart_one.get_rect()
+            self.rect_heart_one.centerx = 690
+            self.rect_heart_one.centery = 19
+            #Cargamos el segundo corazón
+            self.image_heart_two = image.load(GenericData.BG_PATH +"heart.png")
+            self.rect_heart_two = self.image_heart_two.get_rect()
+            self.rect_heart_two.centerx = 730
+            self.rect_heart_two.centery = 19
+            #Cargamos el tercer corazón
+            self.image_heart_three = image.load(GenericData.BG_PATH +"heart.png")
+            self.rect_heart_three = self.image_heart_three.get_rect()
+            self.rect_heart_three.centerx = 770
+            self.rect_heart_three.centery = 19
+        except FileNotFoundError:
+            print("Error al cargar los sprites de la cabecera")
         #Pegamos la puntuación y las palabras en la pantalla
         self.screen.blit(self.image_lives,self.rect_lives)
         self.screen.blit(self.image_score,self.rect_score)
         self.screen.blit(self.number_score,(130,4))
+        self.screen.blit(self.number_ronda,(400,4))
 
         #Comprobamos el contador de vidas para saber cuantos corazones pintar
         if vidas > 0:
@@ -435,45 +485,56 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         """Método para redibujar los objetos una vez actualizados y conseguir el efecto juego"""
         #Ponemos el fondo
         self.screen.blit(self.background, (0, 0))
-        #Pintamos la nave
-        self.screen.blit(self.player.image,self.player.rect)
-        #Pintamos la cabecera
-        self.screen.blit(self.image_lives,self.rect_lives)
-        self.screen.blit(self.image_score,self.rect_score)
-        self.screen.blit(self.number_score,(130,4))
-        #Pintamos corazones        
-        if self.life_counter > 0:
+        if self.game_over == False :
+            #Pintamos la nave
+            self.screen.blit(self.player.image,self.player.rect)
+            #Pintamos la cabecera
+            self.screen.blit(self.image_lives,self.rect_lives)
+            self.screen.blit(self.image_score,self.rect_score)
+            self.screen.blit(self.number_score,(130,4))
+            self.screen.blit(self.number_ronda,(400,4))
+            #Pintamos corazones        
+            if self.life_counter > 0:
             
-            self.screen.blit(self.image_heart_one,self.rect_heart_one)
+                self.screen.blit(self.image_heart_one,self.rect_heart_one)
             
-        if self.life_counter > 1:
+            if self.life_counter > 1:
             
-            self.screen.blit(self.image_heart_two,self.rect_heart_two)
+                self.screen.blit(self.image_heart_two,self.rect_heart_two)
             
-        if self.life_counter == 3 :
+            if self.life_counter == 3 :
             
-            self.screen.blit(self.image_heart_three,self.rect_heart_three)
+                self.screen.blit(self.image_heart_three,self.rect_heart_three)
         
-        #Recorremos aliens pegando
-        for j in self.aliens_list:
-            self.screen.blit(j.image, j.rect)
-        #Recorremos balas pegando   
-        for i in self.bullets_list:
-            self.screen.blit(i.image, i.rect)
-        #Recorremos balas aliens pegando   
-        for k in self.ab_bullets:
-            self.screen.blit(k.image, k.rect)
-        #Recorremos muros pegando
-        for l in self.wall_group:
-            self.screen.blit(l.image, l.rect)
-        #Recorremos explosiones pegando y actualizandolas
-        for m in self.exp_group:
-            m.update()
-            self.screen.blit(m.image,m.rect)
-        
+            #Recorremos aliens pegando
+            for j in self.aliens_list:
+                self.screen.blit(j.image, j.rect)
+            #Recorremos balas pegando   
+            for i in self.bullets_list:
+                self.screen.blit(i.image, i.rect)
+            #Recorremos balas aliens pegando   
+            for k in self.ab_bullets:
+                self.screen.blit(k.image, k.rect)
+            #Recorremos muros pegando
+            for l in self.wall_group:
+                self.screen.blit(l.image, l.rect)
+            #Recorremos explosiones pegando y actualizandolas
+            for m in self.exp_group:
+                m.update()
+                self.screen.blit(m.image,m.rect)
+        else  :
+            
+            self.image_go= image.load(GenericData.BG_PATH + 'game_over.png')
+            self.rect_go = self.image_go.get_rect()
+            self.rect_go.centery = 300
+            self.rect_go.centerx = 400
+            self.screen.blit(self.image_go,self.rect_go)
+            
+           
+            
         #Actualizamos pantalla
         display.update()
-
+        
     def ship_shoot(self):
         """Método para que la nave dispare"""
 
@@ -544,7 +605,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 self.a_list = self.aliens_list.sprites()
                 tam = len(self.a_list)
                 if tam == 0:
-                    if self.ronda < 24:
+                    if self.ronda < 19:
                         #Aumentamos el número de aliens 
                         self.ronda += self.incremento
                         #Aumentamos su velocidad
@@ -559,6 +620,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         
                     #Volvemos a empezar
                     self.create_aliens(self.ronda,self.speed_ronda)
+                    self.num_ronda += 1
                     #Colocamos los muros de nuevo
                     self.init_wall()
                         
@@ -610,7 +672,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.ab_bullets.remove(shot)
                         for disparo in self.bullets_list:
                             self.bullets_list.remove(disparo)
-                            
+
+
+                        self.game_over = True   
                         #Y volvemos a empezar
                         self.shot_time = 550
                         self.ronda = 5
@@ -619,7 +683,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
 
                         #Restablecemos score
                         self.score_counter= 0
-
+                        self.num_ronda = 1
                         #Colocamos los muros de nuevo
                         self.init_wall()
                         
@@ -665,7 +729,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.ab_bullets.remove(bala)
                         for disparo in self.bullets_list:
                             self.bullets_list.remove(disparo)
-                        
+                            
+                        self.game_over = True
                         time.wait(750)
                         #Y volvemos a empezar
                         self.shot_time = 550
@@ -675,7 +740,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
 
                         #Restablecemos score
                         self.score_counter= 0
-                        
+                        self.num_ronda = 1
                         #Colocamos los muros de nuevo
                         self.init_wall()
 
@@ -715,23 +780,31 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Controlamos las colisiones entre objetos
             self.colitions()
             
-            ##Se vuelve a llamar al método para disparar para mejorar el funcionamiento del disparo
+            #Se vuelve a llamar al método para disparar para mejorar el funcionamiento del disparo
             self.ship_shoot()
             
             #Añadimos el texto a la pantalla          
             self.text(self.life_counter)
             
-            #Método para redibujar la pantalla y que funcione el movimiento
-            self.redraw()
+            self.clockgame = time.get_ticks()
+            if self.game_over == True:
+                while (time.get_ticks()-self.clockgame) < 5000 :
+                    #Método para redibujar la pantalla y que funcione el movimiento
+                    self.redraw()
+                self.game_over = False
+            
+            else:
+                #Método para redibujar la pantalla y que funcione el movimiento
+                self.redraw()
 
-            ##Se vuelve a llamar al método para disparar para mejorar el funcionamiento del disparo
+            #Se vuelve a llamar al método para disparar para mejorar el funcionamiento del disparo
             self.ship_shoot()
             
             #El usuario hizo algo 
             for evento in event.get():
                 if evento.type == QUIT :
                     sys.exit()
-
+            
 if __name__ == '__main__':
     game = SpaceInvaders()
     game.main()
