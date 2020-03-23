@@ -333,6 +333,10 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.init_wall()
         #Grupo de explosiones
         self.exp_group = sprite.Group()
+        self.image_go= image.load(GenericData.BG_PATH + 'game_over.png')
+        self.rect_go = self.image_go.get_rect()
+        self.rect_go.centery = 300
+        self.rect_go.centerx = 400
 
         self.game_over = False
         self.clockgame = time.Clock()
@@ -524,10 +528,6 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 self.screen.blit(m.image,m.rect)
         else  :
             
-            self.image_go= image.load(GenericData.BG_PATH + 'game_over.png')
-            self.rect_go = self.image_go.get_rect()
-            self.rect_go.centery = 300
-            self.rect_go.centerx = 400
             self.screen.blit(self.image_go,self.rect_go)
             
            
@@ -656,13 +656,12 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     for player in player_shot:
                         mixer.Sound.play(self.restart_sound)
                         self.life_counter=3
-                        #Ponemos explosion
-                        exp = Explotion(player.burn(),1)
-                        self.exp_group.add(exp)
-                        #Si perdemos, quitamos los aliens
+            
+                        #Si perdemos, quitamos los aliens y exp
                         for a in self.aliens_list:
                             self.aliens_list.remove(a)
-                                
+                        for ep in self.exp_group:
+                            self.exp_group.remove(ep)      
                         
 
                         #Eliminamos las balas
@@ -680,12 +679,14 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         self.ronda = 5
                         self.speed_ronda = 2
                         self.create_aliens(self.ronda,self.speed_ronda)
-
+                        self.player.rect.centerx = 400
+                        self.player.rect.centery = 565
                         #Restablecemos score
                         self.score_counter= 0
                         self.num_ronda = 1
                         #Colocamos los muros de nuevo
                         self.init_wall()
+                        
                         
             #Colisiones alien-nave
             for ali in self.aliens_list:
@@ -710,19 +711,16 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     
                     player_shot = sprite.spritecollide(ali, self.player_list,False)
                     for player in player_shot:
-                        #Ponemos explosion
-                        exp = Explotion(player.burn(),1)
-                        self.exp_group.add(exp)
-                        #Ponemos explosion alien
-                        exp = Explotion(ali.burn(),0)
-                        self.exp_group.add(exp)
+                        
                         #Sonido
                         mixer.Sound.play(self.restart_sound)
                         self.life_counter=3
                         
-                        #Si perdemos, quitamos los aliens
+                        #Si perdemos, quitamos los aliens y explosiones
                         for a in self.aliens_list:
                             self.aliens_list.remove(a)
+                        for ep in self.exp_group:
+                            self.exp_group.remove(ep)
                         #Quitamos las balas
                         #Eliminamos las balas
                         for bala in self.ab_bullets:
@@ -737,7 +735,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         self.ronda = 5
                         self.speed_ronda = 2
                         self.create_aliens(self.ronda,self.speed_ronda)
-
+                        self.player.rect.centerx = 400
+                        self.player.rect.centery = 565
                         #Restablecemos score
                         self.score_counter= 0
                         self.num_ronda = 1
@@ -788,9 +787,18 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             
             self.clockgame = time.get_ticks()
             if self.game_over == True:
-                while (time.get_ticks()-self.clockgame) < 5000 :
+                
+                while (time.get_ticks()-self.clockgame+450) < 3555 :
                     #Método para redibujar la pantalla y que funcione el movimiento
-                    self.redraw()
+                    if (time.get_ticks()-self.clockgame+450)%500 == 0:
+                         self.rect_go.centery = 1600
+                         self.rect_go.centerx = 1899
+                         self.redraw()
+                    elif(time.get_ticks()-self.clockgame+450)%755 == 0:
+                        self.rect_go.centery = 300
+                        self.rect_go.centerx = 400
+                        self.redraw()
+                        
                 self.game_over = False
             
             else:
