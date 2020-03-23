@@ -663,7 +663,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         for a in self.aliens_list:
                             self.aliens_list.remove(a)
                                 
-                        time.wait(750)
+                        
 
                         #Eliminamos las balas
                         self.ab_bullets.remove(bullet)
@@ -731,7 +731,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.bullets_list.remove(disparo)
                             
                         self.game_over = True
-                        time.wait(750)
+                        
                         #Y volvemos a empezar
                         self.shot_time = 550
                         self.ronda = 5
