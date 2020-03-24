@@ -51,7 +51,29 @@ class Wall (sprite.Sprite):
         self.row = row
         self.col = column
 
-        
+    #Getters y setters
+    def color (self):
+        return self.color
+    def color (self,n_color):
+        self.color = n_color
+    def image (self):
+        return self.image
+    def image (self,n_image):
+        self.image = n_image
+    def rect (self):
+        return self.rect
+    def rect (self,n_rect):
+        self.rect = n_rect
+    def row (self):
+        return self.row
+    def row (self,n_row):
+        self.row = n_row
+    def col (self):
+        return self.col
+    def col (self,n_col):
+        self.col = n_col
+    
+    
     
 class Bullet (sprite.Sprite):
     """Clase que define el comportamiento de una bala"""
@@ -90,7 +112,25 @@ class Bullet (sprite.Sprite):
         #Si llega a la parte inferior la eliminamos 
         if self.rect.y < 2 or self.rect.y > 585:
             self.kill() 
-
+    #Getters y setters
+    def dirc (self):
+        return self.dirc
+    def dirc (self,n_dirc):
+        self.dirc = n_dirc
+    def image (self):
+        return self.image
+    def image (self,n_image):
+        self.image = n_image
+    def rect (self):
+        return self.rect
+    def rect (self,n_rect):
+        self.rect = n_rect
+    def speed (self):
+        return self.speed
+    def speed (self,n_speed):
+        self.speed = n_speed
+    
+        
 class Ship (sprite.Sprite):
     """Clase que define el comportamiento de la nave"""
     def __init__(self):
@@ -175,10 +215,31 @@ class Ship (sprite.Sprite):
                 self.rect.centerx -= self.speed
                 
                 
+    #Getters y setters
+    def changex (self):
+        return self.changex
+    def changex (self,n_changex):
+        self.changex = n_changex
+    def changey (self):
+        return self.changey
+    def changey (self,n_changey):
+        self.changey = n_changey
+    def image (self):
+        return self.image
+    def image (self,n_image):
+        self.image = n_image
+    def rect (self):
+        return self.rect
+    def rect (self,n_rect):
+        self.rect = n_rect
+    def speed (self):
+        return self.speed
+    def speed (self,n_speed):
+        self.speed = n_speed            
+    
                 
     def burn (self):
         """Método que devuelve las coordenadas de la nave para poder realizar la animación de explosión"""
-        
         #Atributos para guardar las coordenadas en la animación
         return (self.rect.centerx,self.rect.centery)
     
@@ -232,12 +293,42 @@ class Alien (sprite.Sprite):
         #Si llegamos a la parte inferior eliminamos el objeto    
         if self.rect.y >=590:
             self.kill()
+
+    #Getters y setters
+    def changex (self):
+        return self.changex
+    def changex (self,n_changex):
+        self.changex = n_changex
+    def changey (self):
+        return self.changey
+    def changey (self,n_changey):
+        self.changey = n_changey
+    def dir (self):
+        return self.dir
+    def dir (self,n_dir):
+        self.dir = n_dir
+    def image (self):
+        return self.image
+    def image (self,n_image):
+        self.image = n_image
+    def rect (self):
+        return self.rect
+    def rect (self,n_rect):
+        self.rect = n_rect
+    def top (self):
+        return self.top
+    def top (self,n_top):
+        self.top = n_top
+    def speed (self):
+        return self.speed
+    def speed (self,n_speed):
+        self.speed = n_speed
         
     def burn (self):
         """Método para proporiconar la información para la explosión"""
-        
         #Atributos para guardar las coordenadas en la animación
         return (self.rect.centerx,self.rect.centery)
+    
 class AlienTocho (Alien):
     """Clase para manejar aliens tochos"""
     def __init__(self,speed):
@@ -328,7 +419,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         #Numero de ronda
         self.num_ronda = 1
         #Incremento de aliens
-        self.incremento = 2
+        self.incremento = 1
         #Tiempo de disparo
         self.shot_time = 550
         #Incremento de velocidad de aliens
