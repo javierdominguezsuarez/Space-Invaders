@@ -264,7 +264,7 @@ class Alien (sprite.Sprite):
         #Velocidad
         assert type(speed) == int ,"Error de tipo en velocidad de alien"
         self.speed = speed
-        self.top = 750
+        self.top = 730
         #Atributos para guardar las coordenadas en la animación
         self.changex = 0
         self.changey = 0
@@ -336,7 +336,7 @@ class AlienTocho (Alien):
         super().__init__(speed)
         self.image = image.load(GenericData.AL_PATH +"alien_tocho.png")
         self.rect = self.image.get_rect()
-        self.top = 580
+        self.top = 500
         
 class Explotion (sprite.Sprite):
 
@@ -352,6 +352,8 @@ class Explotion (sprite.Sprite):
                 print("Error en el sprite de la explosión")
             #Esta función nos devuelve un objeto con las dimensiones del sprite
             self.rect = self.image.get_rect()
+            self.rect.centerx = coord[0]
+            self.rect.centery = coord[1]
         #Si es de la nave
         elif tipe == 1 :
             try :
@@ -361,9 +363,20 @@ class Explotion (sprite.Sprite):
                 print("Error en el sprite de la explosión")
             #Esta función nos devuelve un objeto con las dimensiones del sprite
             self.rect = self.image.get_rect()
-            
-        self.rect.centerx = coord[0]
-        self.rect.centery = coord[1]
+            self.rect.centerx = coord[0]
+            self.rect.centery = coord[1]
+        elif tipe == 2:
+            try :
+                #Extraenos la imagen para la explosión
+                self.image = image.load(GenericData.AL_PATH +"explosion_tocho.png")
+            except FileNotFoundError :
+                print("Error en el sprite de la explosión")
+            #Esta función nos devuelve un objeto con las dimensiones del sprite
+            self.rect = self.image.get_rect()
+            self.rect.centerx = coord[0]
+            self.rect.centery = coord[1]+30
+        
+        
         #Reloj para controlar el tiempo que se emite
         self.clk = time.get_ticks()
         
@@ -690,7 +703,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
 
     def alien_shoot(self):
         """Método para que la nave dispare"""
-
+        
+    
         #Disminuimos el tiempo entre disparos con el tiempo
         if self.shot_time > 200 and self.ronda >15:
             self.shot_time -=50
@@ -702,16 +716,34 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             if tam != 0:
                 #Elegimos un alien al azar para que dispare
                 alien = self.a_list[randrange(tam)]
-                #Creamos la bala
-                bullet = Bullet(alien.rect.centerx,alien.rect.bottom +5,1,10,0)
-                #Añadimos la bala a la lista de balas
-                self.ab_bullets.add(bullet)
-                #Añadimos la bala a la lista de sprites
-                self.spr_list_ab.add(bullet)
-                #Pegamos la bala a la pantalla
-                self.screen.blit(bullet.image, bullet.rect)
-                #Volvemos a tomar el tiempo
-                self.timer = time.get_ticks()
+                #Si es el alien final
+                if isinstance(alien,AlienTocho):
+                    bullet = Bullet(alien.rect.centerx+45,alien.rect.bottom +5,1,10,0)
+                    bullet_two = Bullet(alien.rect.centerx-45,alien.rect.bottom +5,1,10,0)
+                    #Añadimos la bala a la lista de balas
+                    self.ab_bullets.add(bullet)
+                    self.ab_bullets.add(bullet_two)
+                    #Añadimos la bala a la lista de sprites
+                    self.spr_list_ab.add(bullet)
+                    self.spr_list_ab.add(bullet_two)
+                    #Pegamos la bala a la pantalla
+                    self.screen.blit(bullet.image, bullet.rect)
+                    self.screen.blit(bullet.image, bullet_two.rect)
+                    #Volvemos a tomar el tiempo
+                    self.timer = time.get_ticks() 
+
+                else :
+                    #Si es un alien normal
+                    #Creamos la bala
+                    bullet = Bullet(alien.rect.centerx,alien.rect.bottom +5,1,10,0)
+                    #Añadimos la bala a la lista de balas
+                    self.ab_bullets.add(bullet)
+                    #Añadimos la bala a la lista de sprites
+                    self.spr_list_ab.add(bullet)
+                    #Pegamos la bala a la pantalla
+                    self.screen.blit(bullet.image, bullet.rect)
+                    #Volvemos a tomar el tiempo
+                    self.timer = time.get_ticks()
 
     def colitions (self):
             #Colisiones aliens con balas
@@ -723,7 +755,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     if isinstance(alien,AlienTocho) :
                         
                         #Hacemos una explosion
-                        exp = Explotion(alien.burn(),0)
+                        exp = Explotion(alien.burn(),2)
                         self.exp_group.add(exp)
                         #Ponemos el sonido de la explosión
                         mixer.Sound.play(self.crash_alien_sound)
