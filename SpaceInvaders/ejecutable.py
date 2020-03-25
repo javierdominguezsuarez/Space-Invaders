@@ -452,9 +452,131 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         #Alien tocho
         self.difficult_alien = 10
         self.count_alientocho = 0
-
+        
         self.game_over = False
         self.clockgame = time.Clock()
+
+    #Getter y setter
+    def timer(self):
+        return self.timer
+
+    def timer(self, new_timer):
+        self.timer = new_timer
+
+
+    def clock(self):
+        return self.clock
+
+    def clock(self, new_clock):
+        self.clock = new_clock
+
+
+    def ronda(self):
+        return self.ronda
+
+    def ronda(self, new_ronda):
+        self.ronda = new_ronda
+
+
+    def num_ronda(self):
+        return self.num_ronda
+
+    def num_ronda(self, new_num_ronda):
+        self.num_ronda = new_num_ronda
+
+
+    def incremento(self):
+        return self.incremento
+
+    def incremento(self, new_incremento):
+        self.incremento = new_incremento
+
+
+    def shot_time(self):
+        return self.shot_time
+
+    def shot_time(self, new_shot_time):
+        self.shot_time = new_shot_time
+        
+
+    def speed_ronda(self):
+        return self.speed_ronda
+
+    def speed_ronda(self, new_speed_ronda):
+        self.speed_ronda = new_speed_ronda
+
+
+    def difficult_alien(self):
+        return self.difficult_alien
+
+    def difficult_alien(self, new_difficult_ronda):
+        self.difficult_alien = new_difficult_ronda
+
+
+    def count_alientocho(self):
+        return self.count_alientocho
+
+    def count_alientocho(self, new_alientocho):
+        self.count_alientocho = new_alientocho
+
+
+    def game_over(self):
+        return self.game_over
+
+    def game_over(self, new_game_over):
+        self.game_over = new_game_over
+
+
+    def clockgame(self):
+        return self.clockgame
+
+    def clockgame(self, new_clockgame):
+        self.clockgame = new_clockgame
+
+        
+    @property
+    def main_music(self):
+        return self.__main_music
+    
+    @main_music.setter
+    def main_music(self, new_sound):
+        self.__main_music = new_sound
+
+
+    @property
+    def shot_sound(self):
+        return self.__shot_sound
+    
+    @shot_sound.setter
+    def shot_sound(self, new_sound):
+        self.__shot_sound = new_sound
+
+
+    @property
+    def crash_ship_sound(self):
+        return self.__crash_ship_sound
+    
+    @crash_ship_sound.setter
+    def crash_ship_sound(self, new_sound):
+        self.__crash_ship_sound = new_sound
+
+    @property
+    def crash_alien_sound(self):
+        return self.__crash_alien_sound
+    
+    @crash_alien_sound.setter
+    def crash_alien_sound(self, new_sound):
+        self.__crash_alien_sound = new_sound
+   
+
+    @property
+    def restart_sound(self):
+        return self.__restart_sound
+    
+    @restart_sound.setter
+    def restart_sound(self, new_sound):
+        self.__restart_sound = new_sound
+        
     def init_sound (self):
         """Inicializamos música"""
         try :
@@ -462,25 +584,25 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Llamamos a la función mixer
             mixer.init()
             #Música de fondo
-            self.main_music = mixer.music.load(GenericData.BG_PATH + 'music.mp3')
+            self.__main_music = mixer.music.load(GenericData.BG_PATH + 'music.mp3')
             #El -1 indica que está sonando en bucle
             mixer.music.play(-1)
             #Ajustamos el volumen
             mixer.music.set_volume(0.05)
             #Sonido disparo
-            self.shot_sound = mixer.Sound("shot.wav")
+            self.__shot_sound = mixer.Sound("shot.wav")
             #Sonido explosión alien
-            self.crash_alien_sound = mixer.Sound("ca.wav")
+            self.__crash_alien_sound = mixer.Sound("ca.wav")
             #Ajustamos el volumen
-            mixer.Sound.set_volume(self.crash_alien_sound,0.1)
+            mixer.Sound.set_volume(self.__crash_alien_sound,0.1)
             #Sonido explosion nave
-            self.crash_ship_sound = mixer.Sound("cs.wav")
+            self.__crash_ship_sound = mixer.Sound("cs.wav")
             #Ajustamos el volumen
-            mixer.Sound.set_volume(self.crash_ship_sound,0.1)
+            mixer.Sound.set_volume(self.__crash_ship_sound,0.1)
             #Sonido explosión final nave
-            self.restart_sound = mixer.Sound("last.wav")
+            self.__restart_sound = mixer.Sound("last.wav")
             #Ajustamos el volumen
-            mixer.Sound.set_volume(self.restart_sound,0.1)
+            mixer.Sound.set_volume(self.__restart_sound,0.1)
         except FileNotFoundError :
             print("Algunos archivos de audio no se han encontrado")
         
@@ -689,7 +811,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 if even.key == K_SPACE:
 
                     #Activamos sonido de disparo
-                    mixer.Sound.play(self.shot_sound)
+                    mixer.Sound.play(self.__shot_sound)
                     #Creamos la bala
                     bullet = Bullet(self.player.rect.centerx,self.player.rect.top,-1,22,1)
                     #Añadimos la bala a la lista de balas
@@ -758,7 +880,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         exp = Explotion(alien.burn(),2)
                         self.exp_group.add(exp)
                         #Ponemos el sonido de la explosión
-                        mixer.Sound.play(self.crash_alien_sound)
+                        mixer.Sound.play(self.__crash_alien_sound)
                         #Borramos las balas
                         self.count_alientocho+=1
                         self.bullets_list.remove(bullet)
@@ -773,7 +895,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         exp = Explotion(alien.burn(),0)
                         self.exp_group.add(exp)
                         #Ponemos el sonido de la explosión
-                        mixer.Sound.play(self.crash_alien_sound)
+                        mixer.Sound.play(self.__crash_alien_sound)
                         #Aumentamos la puntuación
                         self.score_counter+=50
                         #Borramos las balas
@@ -829,7 +951,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         exp = Explotion(player.burn(),1)
                         self.exp_group.add(exp)
                         #Ponemos el sonido
-                        mixer.Sound.play(self.crash_ship_sound)
+                        mixer.Sound.play(self.__crash_ship_sound)
                         #Quitamos una vida
                         self.life_counter-=1
                         #Borramos balas
@@ -839,7 +961,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     
                     player_shot = sprite.spritecollide(bullet, self.player_list,False)
                     for player in player_shot:
-                        mixer.Sound.play(self.restart_sound)
+                        mixer.Sound.play(self.__restart_sound)
                         self.life_counter=3
             
                         #Si perdemos, quitamos los aliens y exp
@@ -882,7 +1004,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         if isinstance(ali,AlienTocho):
                             #Si chocamos con el alientocho volvemos a empezar
                             #Sonido
-                            mixer.Sound.play(self.restart_sound)
+                            mixer.Sound.play(self.__restart_sound)
                             self.life_counter=3
                         
                             #Si perdemos, quitamos los aliens y explosiones
@@ -919,7 +1041,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             exp = Explotion(ali.burn(),0)
                             self.exp_group.add(exp)
                             #Sonido de explosión
-                            mixer.Sound.play(self.crash_ship_sound)
+                            mixer.Sound.play(self.__crash_ship_sound)
                             #Quitamos una vida del contador
                             self.life_counter-=1
                             #Borramos el alien
@@ -931,7 +1053,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     for player in player_shot:
                         
                         #Sonido
-                        mixer.Sound.play(self.restart_sound)
+                        mixer.Sound.play(self.__restart_sound)
                         self.life_counter=3
                         
                         #Si perdemos, quitamos los aliens y explosiones
