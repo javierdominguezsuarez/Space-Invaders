@@ -455,6 +455,10 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         
         self.game_over = False
         self.clockgame = time.Clock()
+        #contador balas en pantalla
+        self.count_bullets_screen=0
+        self.clock_bullets = time.Clock()
+        self.flag_recharge = False
 
     #Getter y setter
     def timer(self):
@@ -609,7 +613,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
     def init_wall(self):
         """Inicializamos los bloques"""
         
-        for row in range(6):
+        for row in range(5):
             for col in range(15):
                 #Primer bloque
                 x = 75 + (col * 10)
@@ -622,7 +626,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 w = 435 +  (row * 10)
 
                 #Comprobamos si la fila es la primera o la última para pintarla de otro color
-                if row == 0 or row == 5 :
+                if row == 0 or row == 4 :
                     
                     wall = Wall(x,y,row,col,0)
                     wall_sec = Wall(t,s,row,col,0)
@@ -698,7 +702,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Cargamos el sprite de vidas y lo posicionamos
             self.image_lives = image.load(GenericData.BG_PATH +"lives.png")
             self.rect_lives = self.image_lives.get_rect()
-            self.rect_lives.centerx =  610
+            self.rect_lives.centerx =  500
             self.rect_lives.centery = 20
             #Cargamos el sprite de score y lo posicionamos
             self.image_score = image.load(GenericData.BG_PATH +"score.png")
@@ -708,31 +712,32 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Cargamos el sprite de round y lo posicionamos
             self.image_round = image.load(GenericData.BG_PATH +"round.png")
             self.rect_round = self.image_round.get_rect()
-            self.rect_round.centerx =  355
+            self.rect_round.centerx =  320
             self.rect_round.centery = 20
             #Cargamos el primer corazón
             self.image_heart_one = image.load(GenericData.BG_PATH +"heart.png")
             self.rect_heart_one = self.image_heart_one.get_rect()
-            self.rect_heart_one.centerx = 690
+            self.rect_heart_one.centerx = 580
             self.rect_heart_one.centery = 19
             #Cargamos el segundo corazón
             self.image_heart_two = image.load(GenericData.BG_PATH +"heart.png")
             self.rect_heart_two = self.image_heart_two.get_rect()
-            self.rect_heart_two.centerx = 730
+            self.rect_heart_two.centerx = 620
             self.rect_heart_two.centery = 19
             #Cargamos el tercer corazón
             self.image_heart_three = image.load(GenericData.BG_PATH +"heart.png")
             self.rect_heart_three = self.image_heart_three.get_rect()
-            self.rect_heart_three.centerx = 770
+            self.rect_heart_three.centerx = 660
             self.rect_heart_three.centery = 19
         except FileNotFoundError:
             print("Error al cargar los sprites de la cabecera")
+            
         #Pegamos la puntuación y las palabras en la pantalla
         self.screen.blit(self.image_lives,self.rect_lives)
         self.screen.blit(self.image_score,self.rect_score)
         self.screen.blit(self.image_round,self.rect_round)
-        self.screen.blit(self.number_score,(130,4))
-        self.screen.blit(self.number_ronda,(430,4))
+        self.screen.blit(self.number_score,(120,4))
+        self.screen.blit(self.number_ronda,(380,3))
 
         #Comprobamos el contador de vidas para saber cuantos corazones pintar
         if vidas > 0:
@@ -747,6 +752,44 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             
             self.screen.blit(self.image_heart_three,self.rect_heart_three)
 
+        #Pintamos el cargador
+        self.image_recharge0 = image.load(GenericData.BG_PATH +"recarga_0.png")
+        self.rect_recharge0 = self.image_recharge0.get_rect()
+        self.rect_recharge0.centerx =  736
+        self.rect_recharge0.centery = 30
+        self.image_recharge1 = image.load(GenericData.BG_PATH +"recarga_1.png")
+        self.rect_recharge1 = self.image_recharge1.get_rect()
+        self.rect_recharge1.centerx =  736
+        self.rect_recharge1.centery = 30
+        self.image_recharge2 = image.load(GenericData.BG_PATH +"recarga_2.png")
+        self.rect_recharge2 = self.image_recharge2.get_rect()
+        self.rect_recharge2.centerx = 736
+        self.rect_recharge2.centery = 30
+        self.image_recharge3 = image.load(GenericData.BG_PATH +"recarga_3.png")
+        self.rect_recharge3 = self.image_recharge3.get_rect()
+        self.rect_recharge3.centerx =  736
+        self.rect_recharge3.centery = 30
+        self.image_recharge4 = image.load(GenericData.BG_PATH +"recarga_4.png")
+        self.rect_recharge4 = self.image_recharge4.get_rect()
+        self.rect_recharge4.centerx =  736
+        self.rect_recharge4.centery =30
+        self.image_recharge5 = image.load(GenericData.BG_PATH +"recarga_5.png")
+        self.rect_recharge5 = self.image_recharge5.get_rect()
+        self.rect_recharge5.centerx =  736
+        self.rect_recharge5.centery = 30
+            
+        if self.count_bullets_screen == 0 or self.count_bullets_screen < 2:
+            self.screen.blit(self.image_recharge5,self.rect_recharge5)
+        elif self.count_bullets_screen == 2 or  self.count_bullets_screen == 3:
+            self.screen.blit(self.image_recharge4,self.rect_recharge4)
+        elif self.count_bullets_screen == 4 or self.count_bullets_screen == 5:
+            self.screen.blit(self.image_recharge3,self.rect_recharge3)
+        elif self.count_bullets_screen == 6 or self.count_bullets_screen == 7:
+            self.screen.blit(self.image_recharge2,self.rect_recharge2)
+        elif self.count_bullets_screen == 8:
+            self.screen.blit(self.image_recharge1,self.rect_recharge1)
+        elif self.count_bullets_screen > 8:
+            self.screen.blit(self.image_recharge0,self.rect_recharge0)
             
     def redraw(self):
         """Método para redibujar los objetos una vez actualizados y conseguir el efecto juego"""
@@ -759,8 +802,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             self.screen.blit(self.image_lives,self.rect_lives)
             self.screen.blit(self.image_score,self.rect_score)
             self.screen.blit(self.image_round,self.rect_round)
-            self.screen.blit(self.number_score,(130,4))
-            self.screen.blit(self.number_ronda,(430,4))
+            self.screen.blit(self.number_score,(120,4))
+            self.screen.blit(self.number_ronda,(380,3))
             #Pintamos corazones        
             if self.life_counter > 0:
             
@@ -773,7 +816,20 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             if self.life_counter == 3 :
             
                 self.screen.blit(self.image_heart_three,self.rect_heart_three)
-        
+
+            if self.count_bullets_screen == 0 or self.count_bullets_screen < 2:
+                self.screen.blit(self.image_recharge5,self.rect_recharge5)
+            elif self.count_bullets_screen == 2 or  self.count_bullets_screen == 3:
+                self.screen.blit(self.image_recharge4,self.rect_recharge4)
+            elif self.count_bullets_screen == 4 or self.count_bullets_screen == 5:
+                self.screen.blit(self.image_recharge3,self.rect_recharge3)
+            elif self.count_bullets_screen == 6 or self.count_bullets_screen == 7:
+                self.screen.blit(self.image_recharge2,self.rect_recharge2)
+            elif self.count_bullets_screen == 8:
+                self.screen.blit(self.image_recharge1,self.rect_recharge1)
+            elif self.count_bullets_screen > 8:
+                self.screen.blit(self.image_recharge0,self.rect_recharge0)
+                
             #Recorremos aliens pegando
             for j in self.aliens_list:
                 self.screen.blit(j.image, j.rect)
@@ -801,25 +857,38 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         
     def ship_shoot(self):
         """Método para que la nave dispare"""
+        
+       
+        if self.flag_recharge:
+            if (time.get_ticks() - self.clock_bullets) < 2000:
+                pass
+            else :
+                self.count_bullets_screen = 0
+                self.flag_recharge = False
+        else :
+            #Recogemos los eventos
+            events = event.get()
 
-        #Recogemos los eventos
-        events = event.get()
+            #Controlamos el boton espacio para disparar
+            for even in events:
+                if even.type == KEYDOWN:
+                    if even.key == K_SPACE:
 
-        #Controlamos el boton espacio para disparar
-        for even in events:
-            if even.type == KEYDOWN:
-                if even.key == K_SPACE:
-
-                    #Activamos sonido de disparo
-                    mixer.Sound.play(self.__shot_sound)
-                    #Creamos la bala
-                    bullet = Bullet(self.player.rect.centerx,self.player.rect.top,-1,22,1)
-                    #Añadimos la bala a la lista de balas
-                    self.bullets_list.add(bullet)
-                    #Añadimos la bala a la lista de sprites
-                    self.spr_list.add(bullet)
-                    #Pegamos la bala a la pantalla
-                    self.screen.blit(bullet.image, bullet.rect)
+                        #Activamos sonido de disparo
+                        mixer.Sound.play(self.__shot_sound)
+                        #Creamos la bala
+                        bullet = Bullet(self.player.rect.centerx,self.player.rect.top,-1,22,1)
+                        #Añadimos la bala al contador de balas en pantalla
+                        self.count_bullets_screen+=1
+                        #Añadimos la bala a la lista de balas
+                        self.bullets_list.add(bullet)
+                        #Añadimos la bala a la lista de sprites
+                        self.spr_list.add(bullet)
+                        #Pegamos la bala a la pantalla
+                        self.screen.blit(bullet.image, bullet.rect)
+                        if self.count_bullets_screen == 9 :
+                            self.flag_recharge = True
+                            self.clock_bullets = time.get_ticks()
 
                     
 
@@ -920,8 +989,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         self.ab_bullets.remove(bala)
                     for disparo in self.bullets_list:
                         self.bullets_list.remove(disparo)
-                       
-                    
+                    #Restablecemos flags de recarga   
+                    self.count_bullets_screen = 0
+                    self.flag_recharge = False
                     self.num_ronda += 1
                     #Volvemos a empezar
                     if self.num_ronda %5 == 0:
@@ -991,6 +1061,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         #Restablecemos score
                         self.score_counter= 0
                         self.num_ronda = 1
+                        #Restablecemos flags de recarga   
+                        self.count_bullets_screen = 0
+                        self.flag_recharge = False
                         #Colocamos los muros de nuevo
                         self.init_wall()
                         
@@ -1022,6 +1095,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.game_over = True
                         
                             #Y volvemos a empezar
+                            #Restablecemos flags de recarga   
+                            self.count_bullets_screen = 0
+                            self.flag_recharge = False
                             self.shot_time = 550
                             self.ronda = 5
                             self.speed_ronda = 2
@@ -1074,6 +1150,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         self.shot_time = 550
                         self.ronda = 5
                         self.speed_ronda = 2
+                        #Restablecemos flags de recarga   
+                        self.count_bullets_screen = 0
+                        self.flag_recharge = False
                         self.create_aliens(self.ronda,self.speed_ronda,False)
                         self.player.rect.centerx = 400
                         self.player.rect.centery = 565
