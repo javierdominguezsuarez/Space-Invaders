@@ -36,9 +36,9 @@ class Wall (sprite.Sprite):
         #Creamos los rectángulos que forman los muros
         self.image = Surface((10,10))
         if self.color == 0 :
-            self.image.fill((164,3,155))
+            self.image.fill((46,139,87))
         else :
-            self.image.fill((255,6,191))
+            self.image.fill((67,205,128))
             
         #Esta función nos devuelve un objeto con las dimensiones del sprite
         self.rect = self.image.get_rect()
@@ -336,7 +336,7 @@ class AlienTocho (Alien):
         super().__init__(speed)
         self.image = image.load(GenericData.AL_PATH +"alien_tocho.png")
         self.rect = self.image.get_rect()
-        self.top = 500
+        self.top = 570
         
 class Explotion (sprite.Sprite):
 
@@ -373,8 +373,8 @@ class Explotion (sprite.Sprite):
                 print("Error en el sprite de la explosión")
             #Esta función nos devuelve un objeto con las dimensiones del sprite
             self.rect = self.image.get_rect()
-            self.rect.centerx = coord[0]
-            self.rect.centery = coord[1]+30
+            self.rect.centerx = 1400#coord[0]
+            self.rect.centery = 1200#coord[1]+40
         
         
         #Reloj para controlar el tiempo que se emite
@@ -400,7 +400,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.screen = display.set_mode((GenericData.AREA))
         try :
             #Preparamos la imagen de fondo
-            self.background = image.load(GenericData.BG_PATH + 'background.jpg').convert_alpha()
+            self.background = image.load(GenericData.BG_PATH + 'background.png').convert_alpha()
         except FileNotFoundError :
             print("No se encuentra el fondo")
         #Inicamos la nave
@@ -909,8 +909,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 alien = self.a_list[randrange(tam)]
                 #Si es el alien final
                 if isinstance(alien,AlienTocho):
-                    bullet = Bullet(alien.rect.centerx+45,alien.rect.bottom +5,1,10,0)
-                    bullet_two = Bullet(alien.rect.centerx-45,alien.rect.bottom +5,1,10,0)
+                    bullet = Bullet(alien.rect.centerx+50,alien.rect.bottom ,1,10,0)
+                    bullet_two = Bullet(alien.rect.centerx-50,alien.rect.bottom ,1,10,0)
                     #Añadimos la bala a la lista de balas
                     self.ab_bullets.add(bullet)
                     self.ab_bullets.add(bullet_two)
@@ -977,11 +977,11 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 self.a_list = self.aliens_list.sprites()
                 tam = len(self.a_list)
                 if tam == 0:
-                    if self.ronda < 19:
+                    if self.ronda < 50:
                         #Aumentamos el número de aliens 
                         self.ronda += self.incremento
                         #Aumentamos su velocidad
-                    if self.speed_ronda <11 and self.ronda > 13:
+                    if self.speed_ronda <8 and self.ronda >9:
                         self.speed_ronda +=1
                         
                     #Eliminamos las balas
