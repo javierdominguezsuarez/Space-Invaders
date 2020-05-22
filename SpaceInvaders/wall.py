@@ -1,8 +1,3 @@
-from pygame import *
-import sys
-from os.path import abspath, dirname
-from random import choice
-
 class Wall (sprite.Sprite):
     """Clase que define el comportamiento de un muro"""
     
@@ -17,9 +12,9 @@ class Wall (sprite.Sprite):
         #Creamos los rectángulos que forman los muros
         self.image = Surface((10,10))
         if self.color == 0 :
-            self.image.fill((164,3,155))
+            self.image.fill((46,139,87))
         else :
-            self.image.fill((255,6,191))
+            self.image.fill((67,205,128))
             
         #Esta función nos devuelve un objeto con las dimensiones del sprite
         self.rect = self.image.get_rect()
@@ -53,7 +48,3 @@ class Wall (sprite.Sprite):
         return self.col
     def col (self,n_col):
         self.col = n_col
-    
-    
-    
-

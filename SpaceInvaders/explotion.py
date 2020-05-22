@@ -33,8 +33,8 @@ class Explotion (sprite.Sprite):
                 print("Error en el sprite de la explosión")
             #Esta función nos devuelve un objeto con las dimensiones del sprite
             self.rect = self.image.get_rect()
-            self.rect.centerx = coord[0]
-            self.rect.centery = coord[1]+30
+            self.rect.centerx = 1400#coord[0]
+            self.rect.centery = 1200#coord[1]+40
         
         
         #Reloj para controlar el tiempo que se emite

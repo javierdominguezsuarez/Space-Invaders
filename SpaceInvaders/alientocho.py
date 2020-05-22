@@ -5,4 +5,4 @@ class AlienTocho (Alien):
         super().__init__(speed)
         self.image = image.load(GenericData.AL_PATH +"alien_tocho.png")
         self.rect = self.image.get_rect()
-        self.top = 500
+        self.top = 570

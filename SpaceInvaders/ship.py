@@ -1,10 +1,3 @@
-from pygame import *
-import sys
-from os.path import abspath, dirname
-from random import choice
-import genericdata
-
-
 class Ship (sprite.Sprite):
     """Clase que define el comportamiento de la nave"""
     def __init__(self):
@@ -117,4 +110,3 @@ class Ship (sprite.Sprite):
         #Atributos para guardar las coordenadas en la animación
         return (self.rect.centerx,self.rect.centery)
     
-

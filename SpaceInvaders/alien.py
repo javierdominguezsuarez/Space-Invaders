@@ -1,9 +1,3 @@
-from pygame import *
-import sys
-from os.path import abspath, dirname
-from random import choice
-import genericdata
-
 class Alien (sprite.Sprite):
     """Clase que define el comportamiento de un alien"""
     def __init__(self,speed):
@@ -89,4 +83,3 @@ class Alien (sprite.Sprite):
         """Método para proporiconar la información para la explosión"""
         #Atributos para guardar las coordenadas en la animación
         return (self.rect.centerx,self.rect.centery)
-    

@@ -1,9 +1,3 @@
-from pygame import *
-import sys
-from os.path import abspath, dirname
-from random import choice
-import genericdata
-
 class Bullet (sprite.Sprite):
     """Clase que define el comportamiento de una bala"""
     
@@ -59,4 +53,3 @@ class Bullet (sprite.Sprite):
     def speed (self,n_speed):
         self.speed = n_speed
     
-        

@@ -1,10 +1,3 @@
-from pygame import *
-import sys
-from os.path import abspath, dirname
-from random import choice
-import genericdata, bullet , ship, alien, aliengroup, text, life, wall
-
-            
 class SpaceInvaders (GenericData,sprite.Sprite):
     """Clase que se encarga de lanzar el juego"""
 
@@ -16,7 +9,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         self.screen = display.set_mode((GenericData.AREA))
         try :
             #Preparamos la imagen de fondo
-            self.background = image.load(GenericData.BG_PATH + 'background.jpg').convert_alpha()
+            self.background = image.load(GenericData.BG_PATH + 'background.png').convert_alpha()
         except FileNotFoundError :
             print("No se encuentra el fondo")
         #Inicamos la nave
@@ -68,9 +61,135 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         #Alien tocho
         self.difficult_alien = 10
         self.count_alientocho = 0
-
+        
         self.game_over = False
         self.clockgame = time.Clock()
+        #contador balas en pantalla
+        self.count_bullets_screen=0
+        self.clock_bullets = time.Clock()
+        self.flag_recharge = False
+
+    #Getter y setter
+    def timer(self):
+        return self.timer
+
+    def timer(self, new_timer):
+        self.timer = new_timer
+
+
+    def clock(self):
+        return self.clock
+
+    def clock(self, new_clock):
+        self.clock = new_clock
+
+
+    def ronda(self):
+        return self.ronda
+
+    def ronda(self, new_ronda):
+        self.ronda = new_ronda
+
+
+    def num_ronda(self):
+        return self.num_ronda
+
+    def num_ronda(self, new_num_ronda):
+        self.num_ronda = new_num_ronda
+
+
+    def incremento(self):
+        return self.incremento
+
+    def incremento(self, new_incremento):
+        self.incremento = new_incremento
+
+
+    def shot_time(self):
+        return self.shot_time
+
+    def shot_time(self, new_shot_time):
+        self.shot_time = new_shot_time
+        
+
+    def speed_ronda(self):
+        return self.speed_ronda
+
+    def speed_ronda(self, new_speed_ronda):
+        self.speed_ronda = new_speed_ronda
+
+
+    def difficult_alien(self):
+        return self.difficult_alien
+
+    def difficult_alien(self, new_difficult_ronda):
+        self.difficult_alien = new_difficult_ronda
+
+
+    def count_alientocho(self):
+        return self.count_alientocho
+
+    def count_alientocho(self, new_alientocho):
+        self.count_alientocho = new_alientocho
+
+
+    def game_over(self):
+        return self.game_over
+
+    def game_over(self, new_game_over):
+        self.game_over = new_game_over
+
+
+    def clockgame(self):
+        return self.clockgame
+
+    def clockgame(self, new_clockgame):
+        self.clockgame = new_clockgame
+
+        
+    @property
+    def main_music(self):
+        return self.__main_music
+    
+    @main_music.setter
+    def main_music(self, new_sound):
+        self.__main_music = new_sound
+
+
+    @property
+    def shot_sound(self):
+        return self.__shot_sound
+    
+    @shot_sound.setter
+    def shot_sound(self, new_sound):
+        self.__shot_sound = new_sound
+
+
+    @property
+    def crash_ship_sound(self):
+        return self.__crash_ship_sound
+    
+    @crash_ship_sound.setter
+    def crash_ship_sound(self, new_sound):
+        self.__crash_ship_sound = new_sound
+
+    @property
+    def crash_alien_sound(self):
+        return self.__crash_alien_sound
+    
+    @crash_alien_sound.setter
+    def crash_alien_sound(self, new_sound):
+        self.__crash_alien_sound = new_sound
+   
+
+    @property
+    def restart_sound(self):
+        return self.__restart_sound
+    
+    @restart_sound.setter
+    def restart_sound(self, new_sound):
+        self.__restart_sound = new_sound
+        
     def init_sound (self):
         """Inicializamos música"""
         try :
@@ -78,32 +197,32 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Llamamos a la función mixer
             mixer.init()
             #Música de fondo
-            self.main_music = mixer.music.load(GenericData.BG_PATH + 'music.mp3')
+            self.__main_music = mixer.music.load(GenericData.BG_PATH + 'music.mp3')
             #El -1 indica que está sonando en bucle
             mixer.music.play(-1)
             #Ajustamos el volumen
             mixer.music.set_volume(0.05)
             #Sonido disparo
-            self.shot_sound = mixer.Sound("shot.wav")
+            self.__shot_sound = mixer.Sound("shot.wav")
             #Sonido explosión alien
-            self.crash_alien_sound = mixer.Sound("ca.wav")
+            self.__crash_alien_sound = mixer.Sound("ca.wav")
             #Ajustamos el volumen
-            mixer.Sound.set_volume(self.crash_alien_sound,0.1)
+            mixer.Sound.set_volume(self.__crash_alien_sound,0.1)
             #Sonido explosion nave
-            self.crash_ship_sound = mixer.Sound("cs.wav")
+            self.__crash_ship_sound = mixer.Sound("cs.wav")
             #Ajustamos el volumen
-            mixer.Sound.set_volume(self.crash_ship_sound,0.1)
+            mixer.Sound.set_volume(self.__crash_ship_sound,0.1)
             #Sonido explosión final nave
-            self.restart_sound = mixer.Sound("last.wav")
+            self.__restart_sound = mixer.Sound("last.wav")
             #Ajustamos el volumen
-            mixer.Sound.set_volume(self.restart_sound,0.1)
+            mixer.Sound.set_volume(self.__restart_sound,0.1)
         except FileNotFoundError :
             print("Algunos archivos de audio no se han encontrado")
         
     def init_wall(self):
         """Inicializamos los bloques"""
         
-        for row in range(6):
+        for row in range(5):
             for col in range(15):
                 #Primer bloque
                 x = 75 + (col * 10)
@@ -116,7 +235,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 w = 435 +  (row * 10)
 
                 #Comprobamos si la fila es la primera o la última para pintarla de otro color
-                if row == 0 or row == 5 :
+                if row == 0 or row == 4 :
                     
                     wall = Wall(x,y,row,col,0)
                     wall_sec = Wall(t,s,row,col,0)
@@ -192,7 +311,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Cargamos el sprite de vidas y lo posicionamos
             self.image_lives = image.load(GenericData.BG_PATH +"lives.png")
             self.rect_lives = self.image_lives.get_rect()
-            self.rect_lives.centerx =  610
+            self.rect_lives.centerx =  500
             self.rect_lives.centery = 20
             #Cargamos el sprite de score y lo posicionamos
             self.image_score = image.load(GenericData.BG_PATH +"score.png")
@@ -202,31 +321,32 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             #Cargamos el sprite de round y lo posicionamos
             self.image_round = image.load(GenericData.BG_PATH +"round.png")
             self.rect_round = self.image_round.get_rect()
-            self.rect_round.centerx =  355
+            self.rect_round.centerx =  320
             self.rect_round.centery = 20
             #Cargamos el primer corazón
             self.image_heart_one = image.load(GenericData.BG_PATH +"heart.png")
             self.rect_heart_one = self.image_heart_one.get_rect()
-            self.rect_heart_one.centerx = 690
+            self.rect_heart_one.centerx = 580
             self.rect_heart_one.centery = 19
             #Cargamos el segundo corazón
             self.image_heart_two = image.load(GenericData.BG_PATH +"heart.png")
             self.rect_heart_two = self.image_heart_two.get_rect()
-            self.rect_heart_two.centerx = 730
+            self.rect_heart_two.centerx = 620
             self.rect_heart_two.centery = 19
             #Cargamos el tercer corazón
             self.image_heart_three = image.load(GenericData.BG_PATH +"heart.png")
             self.rect_heart_three = self.image_heart_three.get_rect()
-            self.rect_heart_three.centerx = 770
+            self.rect_heart_three.centerx = 660
             self.rect_heart_three.centery = 19
         except FileNotFoundError:
             print("Error al cargar los sprites de la cabecera")
+            
         #Pegamos la puntuación y las palabras en la pantalla
         self.screen.blit(self.image_lives,self.rect_lives)
         self.screen.blit(self.image_score,self.rect_score)
         self.screen.blit(self.image_round,self.rect_round)
-        self.screen.blit(self.number_score,(130,4))
-        self.screen.blit(self.number_ronda,(430,4))
+        self.screen.blit(self.number_score,(120,4))
+        self.screen.blit(self.number_ronda,(380,3))
 
         #Comprobamos el contador de vidas para saber cuantos corazones pintar
         if vidas > 0:
@@ -241,6 +361,44 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             
             self.screen.blit(self.image_heart_three,self.rect_heart_three)
 
+        #Pintamos el cargador
+        self.image_recharge0 = image.load(GenericData.BG_PATH +"recarga_0.png")
+        self.rect_recharge0 = self.image_recharge0.get_rect()
+        self.rect_recharge0.centerx =  736
+        self.rect_recharge0.centery = 30
+        self.image_recharge1 = image.load(GenericData.BG_PATH +"recarga_1.png")
+        self.rect_recharge1 = self.image_recharge1.get_rect()
+        self.rect_recharge1.centerx =  736
+        self.rect_recharge1.centery = 30
+        self.image_recharge2 = image.load(GenericData.BG_PATH +"recarga_2.png")
+        self.rect_recharge2 = self.image_recharge2.get_rect()
+        self.rect_recharge2.centerx = 736
+        self.rect_recharge2.centery = 30
+        self.image_recharge3 = image.load(GenericData.BG_PATH +"recarga_3.png")
+        self.rect_recharge3 = self.image_recharge3.get_rect()
+        self.rect_recharge3.centerx =  736
+        self.rect_recharge3.centery = 30
+        self.image_recharge4 = image.load(GenericData.BG_PATH +"recarga_4.png")
+        self.rect_recharge4 = self.image_recharge4.get_rect()
+        self.rect_recharge4.centerx =  736
+        self.rect_recharge4.centery =30
+        self.image_recharge5 = image.load(GenericData.BG_PATH +"recarga_5.png")
+        self.rect_recharge5 = self.image_recharge5.get_rect()
+        self.rect_recharge5.centerx =  736
+        self.rect_recharge5.centery = 30
+            
+        if self.count_bullets_screen == 0 or self.count_bullets_screen < 2:
+            self.screen.blit(self.image_recharge5,self.rect_recharge5)
+        elif self.count_bullets_screen == 2 or  self.count_bullets_screen == 3:
+            self.screen.blit(self.image_recharge4,self.rect_recharge4)
+        elif self.count_bullets_screen == 4 or self.count_bullets_screen == 5:
+            self.screen.blit(self.image_recharge3,self.rect_recharge3)
+        elif self.count_bullets_screen == 6 or self.count_bullets_screen == 7:
+            self.screen.blit(self.image_recharge2,self.rect_recharge2)
+        elif self.count_bullets_screen == 8:
+            self.screen.blit(self.image_recharge1,self.rect_recharge1)
+        elif self.count_bullets_screen > 8:
+            self.screen.blit(self.image_recharge0,self.rect_recharge0)
             
     def redraw(self):
         """Método para redibujar los objetos una vez actualizados y conseguir el efecto juego"""
@@ -253,8 +411,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             self.screen.blit(self.image_lives,self.rect_lives)
             self.screen.blit(self.image_score,self.rect_score)
             self.screen.blit(self.image_round,self.rect_round)
-            self.screen.blit(self.number_score,(130,4))
-            self.screen.blit(self.number_ronda,(430,4))
+            self.screen.blit(self.number_score,(120,4))
+            self.screen.blit(self.number_ronda,(380,3))
             #Pintamos corazones        
             if self.life_counter > 0:
             
@@ -267,7 +425,20 @@ class SpaceInvaders (GenericData,sprite.Sprite):
             if self.life_counter == 3 :
             
                 self.screen.blit(self.image_heart_three,self.rect_heart_three)
-        
+
+            if self.count_bullets_screen == 0 or self.count_bullets_screen < 2:
+                self.screen.blit(self.image_recharge5,self.rect_recharge5)
+            elif self.count_bullets_screen == 2 or  self.count_bullets_screen == 3:
+                self.screen.blit(self.image_recharge4,self.rect_recharge4)
+            elif self.count_bullets_screen == 4 or self.count_bullets_screen == 5:
+                self.screen.blit(self.image_recharge3,self.rect_recharge3)
+            elif self.count_bullets_screen == 6 or self.count_bullets_screen == 7:
+                self.screen.blit(self.image_recharge2,self.rect_recharge2)
+            elif self.count_bullets_screen == 8:
+                self.screen.blit(self.image_recharge1,self.rect_recharge1)
+            elif self.count_bullets_screen > 8:
+                self.screen.blit(self.image_recharge0,self.rect_recharge0)
+                
             #Recorremos aliens pegando
             for j in self.aliens_list:
                 self.screen.blit(j.image, j.rect)
@@ -295,25 +466,38 @@ class SpaceInvaders (GenericData,sprite.Sprite):
         
     def ship_shoot(self):
         """Método para que la nave dispare"""
+        
+       
+        if self.flag_recharge:
+            if (time.get_ticks() - self.clock_bullets) < 2000:
+                pass
+            else :
+                self.count_bullets_screen = 0
+                self.flag_recharge = False
+        else :
+            #Recogemos los eventos
+            events = event.get()
 
-        #Recogemos los eventos
-        events = event.get()
+            #Controlamos el boton espacio para disparar
+            for even in events:
+                if even.type == KEYDOWN:
+                    if even.key == K_SPACE:
 
-        #Controlamos el boton espacio para disparar
-        for even in events:
-            if even.type == KEYDOWN:
-                if even.key == K_SPACE:
-
-                    #Activamos sonido de disparo
-                    mixer.Sound.play(self.shot_sound)
-                    #Creamos la bala
-                    bullet = Bullet(self.player.rect.centerx,self.player.rect.top,-1,22,1)
-                    #Añadimos la bala a la lista de balas
-                    self.bullets_list.add(bullet)
-                    #Añadimos la bala a la lista de sprites
-                    self.spr_list.add(bullet)
-                    #Pegamos la bala a la pantalla
-                    self.screen.blit(bullet.image, bullet.rect)
+                        #Activamos sonido de disparo
+                        mixer.Sound.play(self.__shot_sound)
+                        #Creamos la bala
+                        bullet = Bullet(self.player.rect.centerx,self.player.rect.top,-1,22,1)
+                        #Añadimos la bala al contador de balas en pantalla
+                        self.count_bullets_screen+=1
+                        #Añadimos la bala a la lista de balas
+                        self.bullets_list.add(bullet)
+                        #Añadimos la bala a la lista de sprites
+                        self.spr_list.add(bullet)
+                        #Pegamos la bala a la pantalla
+                        self.screen.blit(bullet.image, bullet.rect)
+                        if self.count_bullets_screen == 9 :
+                            self.flag_recharge = True
+                            self.clock_bullets = time.get_ticks()
 
                     
 
@@ -334,8 +518,8 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 alien = self.a_list[randrange(tam)]
                 #Si es el alien final
                 if isinstance(alien,AlienTocho):
-                    bullet = Bullet(alien.rect.centerx+45,alien.rect.bottom +5,1,10,0)
-                    bullet_two = Bullet(alien.rect.centerx-45,alien.rect.bottom +5,1,10,0)
+                    bullet = Bullet(alien.rect.centerx+50,alien.rect.bottom ,1,10,0)
+                    bullet_two = Bullet(alien.rect.centerx-50,alien.rect.bottom ,1,10,0)
                     #Añadimos la bala a la lista de balas
                     self.ab_bullets.add(bullet)
                     self.ab_bullets.add(bullet_two)
@@ -374,7 +558,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         exp = Explotion(alien.burn(),2)
                         self.exp_group.add(exp)
                         #Ponemos el sonido de la explosión
-                        mixer.Sound.play(self.crash_alien_sound)
+                        mixer.Sound.play(self.__crash_alien_sound)
                         #Borramos las balas
                         self.count_alientocho+=1
                         self.bullets_list.remove(bullet)
@@ -389,7 +573,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         exp = Explotion(alien.burn(),0)
                         self.exp_group.add(exp)
                         #Ponemos el sonido de la explosión
-                        mixer.Sound.play(self.crash_alien_sound)
+                        mixer.Sound.play(self.__crash_alien_sound)
                         #Aumentamos la puntuación
                         self.score_counter+=50
                         #Borramos las balas
@@ -402,11 +586,11 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                 self.a_list = self.aliens_list.sprites()
                 tam = len(self.a_list)
                 if tam == 0:
-                    if self.ronda < 19:
+                    if self.ronda < 50:
                         #Aumentamos el número de aliens 
                         self.ronda += self.incremento
                         #Aumentamos su velocidad
-                    if self.speed_ronda <11 and self.ronda > 13:
+                    if self.speed_ronda <8 and self.ronda >9:
                         self.speed_ronda +=1
                         
                     #Eliminamos las balas
@@ -414,8 +598,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         self.ab_bullets.remove(bala)
                     for disparo in self.bullets_list:
                         self.bullets_list.remove(disparo)
-                       
-                    
+                    #Restablecemos flags de recarga   
+                    self.count_bullets_screen = 0
+                    self.flag_recharge = False
                     self.num_ronda += 1
                     #Volvemos a empezar
                     if self.num_ronda %5 == 0:
@@ -445,7 +630,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         exp = Explotion(player.burn(),1)
                         self.exp_group.add(exp)
                         #Ponemos el sonido
-                        mixer.Sound.play(self.crash_ship_sound)
+                        mixer.Sound.play(self.__crash_ship_sound)
                         #Quitamos una vida
                         self.life_counter-=1
                         #Borramos balas
@@ -455,7 +640,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     
                     player_shot = sprite.spritecollide(bullet, self.player_list,False)
                     for player in player_shot:
-                        mixer.Sound.play(self.restart_sound)
+                        mixer.Sound.play(self.__restart_sound)
                         self.life_counter=3
             
                         #Si perdemos, quitamos los aliens y exp
@@ -485,6 +670,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         #Restablecemos score
                         self.score_counter= 0
                         self.num_ronda = 1
+                        #Restablecemos flags de recarga   
+                        self.count_bullets_screen = 0
+                        self.flag_recharge = False
                         #Colocamos los muros de nuevo
                         self.init_wall()
                         
@@ -498,7 +686,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         if isinstance(ali,AlienTocho):
                             #Si chocamos con el alientocho volvemos a empezar
                             #Sonido
-                            mixer.Sound.play(self.restart_sound)
+                            mixer.Sound.play(self.__restart_sound)
                             self.life_counter=3
                         
                             #Si perdemos, quitamos los aliens y explosiones
@@ -516,6 +704,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             self.game_over = True
                         
                             #Y volvemos a empezar
+                            #Restablecemos flags de recarga   
+                            self.count_bullets_screen = 0
+                            self.flag_recharge = False
                             self.shot_time = 550
                             self.ronda = 5
                             self.speed_ronda = 2
@@ -535,7 +726,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                             exp = Explotion(ali.burn(),0)
                             self.exp_group.add(exp)
                             #Sonido de explosión
-                            mixer.Sound.play(self.crash_ship_sound)
+                            mixer.Sound.play(self.__crash_ship_sound)
                             #Quitamos una vida del contador
                             self.life_counter-=1
                             #Borramos el alien
@@ -547,7 +738,7 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                     for player in player_shot:
                         
                         #Sonido
-                        mixer.Sound.play(self.restart_sound)
+                        mixer.Sound.play(self.__restart_sound)
                         self.life_counter=3
                         
                         #Si perdemos, quitamos los aliens y explosiones
@@ -568,6 +759,9 @@ class SpaceInvaders (GenericData,sprite.Sprite):
                         self.shot_time = 550
                         self.ronda = 5
                         self.speed_ronda = 2
+                        #Restablecemos flags de recarga   
+                        self.count_bullets_screen = 0
+                        self.flag_recharge = False
                         self.create_aliens(self.ronda,self.speed_ronda,False)
                         self.player.rect.centerx = 400
                         self.player.rect.centery = 565
@@ -650,4 +844,3 @@ class SpaceInvaders (GenericData,sprite.Sprite):
 if __name__ == '__main__':
     game = SpaceInvaders()
     game.main()
-
